@@ -8,7 +8,7 @@ import org.scalacheck.Arbitrary
 
 class ScodecSuite extends CirceSuite {
   implicit val arbitraryBitVector: Arbitrary[BitVector] =
-    Arbitrary(Arbitrary.arbitrary[Array[Byte]].map(BitVector.view))
+    Arbitrary(Arbitrary.arbitrary[Iterable[Boolean]].map(BitVector.bits))
 
   implicit val arbitraryByteVector: Arbitrary[ByteVector] =
     Arbitrary(Arbitrary.arbitrary[Array[Byte]].map(ByteVector.view))

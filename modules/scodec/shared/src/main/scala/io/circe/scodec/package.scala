@@ -7,7 +7,7 @@ package object scodec {
     Decoder.instance { c =>
       Decoder.decodeString(c) match {
         case Right(str) =>
-          BitVector.fromBase64Descriptive(str) match {
+          BitVector.fromBinDescriptive(str) match {
             case r @ Right(_) => r.asInstanceOf[Decoder.Result[BitVector]]
             case Left(err) => Left(DecodingFailure(err, c.history))
           }
@@ -16,7 +16,7 @@ package object scodec {
     }
 
   implicit final val encodeBitVector: Encoder[BitVector] =
-    Encoder.encodeString.contramap(_.toBase64)
+    Encoder.encodeString.contramap(_.toBin)
 
   implicit final val decodeByteVector: Decoder[ByteVector] =
     Decoder.instance { c =>
