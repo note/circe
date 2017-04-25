@@ -14,9 +14,18 @@ package object scodec {
         case Right(str) =>
           BitVector.fromBase64Descriptive(str.drop(1)) match {
             case Right(r) =>
-              val numberOfCharsToIgnore = 8 - str.take(1).toByte
-              val res = r.take(r.size - numberOfCharsToIgnore)
-              Right(res)
+              if(str.nonEmpty){
+                val digit = (new scala.runtime.RichChar(str.head)).asDigit
+                if(digit >= 0 && digit <=8) {
+                  val numberOfCharsToIgnore = 8 - digit
+                  val res = r.take(r.size - numberOfCharsToIgnore)
+                  Right(res)
+                } else {
+                  Left(DecodingFailure("Incorrect format for BitVector field", c.history))
+                }
+              } else {
+                Left(DecodingFailure("Incorrect format for BitVector field", c.history))
+              }
             case Left(err) => Left(DecodingFailure(err, c.history))
           }
         case l @ Left(_) => l.asInstanceOf[Decoder.Result[BitVector]]
@@ -31,7 +40,7 @@ package object scodec {
         val mod = bv.size % 8
         if (mod == 0) 8 else mod
       }
-      significantBits.toByte + bv.toBase64
+      significantBits.toString + bv.toBase64
     }
 
   implicit final val decodeByteVector: Decoder[ByteVector] =

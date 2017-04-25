@@ -2,6 +2,7 @@ package io.circe.scodec
 
 import _root_.scodec.bits.{ BitVector, ByteVector }
 import cats.Eq
+import io.circe.{Decoder, Json}
 import io.circe.testing.CodecTests
 import io.circe.tests.CirceSuite
 import org.scalacheck.Arbitrary
@@ -22,4 +23,9 @@ class ScodecSuite extends CirceSuite {
   checkLaws("Codec[BitVector]", CodecTests[BitVector].codec)
   
   checkLaws("Codec[ByteVector]", CodecTests[ByteVector].codec)
+
+  "A JSON number" should "not be decoded as a non-numeric type" in {
+    val json = Json.fromString("amA==")
+    assert(decodeBitVector.decodeJson(json).isLeft)
+  }
 }
